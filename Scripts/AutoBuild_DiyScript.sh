@@ -76,7 +76,6 @@ git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/l
 git clone https://github.com/Openwrt-Passwall/openwrt-passwall package/passwall
 git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/openwrt-passwall-packages
 git clone https://github.com/AdguardTeam/AdGuardHome package/AdGuardHome
-git clone https://github.com/sbwml/luci-app-quickfile package/luci-app-quickfile
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
