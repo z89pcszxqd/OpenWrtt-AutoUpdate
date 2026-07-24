@@ -175,39 +175,14 @@ jobs:
         Firmware_Diy
         Firmware_Diy_Other
 
-    - name: 检查缓存
-      id: check-cache
-      uses: actions/cache@main
+    - name: 缓存加速
+      if: env.CACHE_ACCELERATE == 'true'
+      uses: HiGarfield/cachewrtbuild@main
       with:
-        key: ${{ env.OP_REPO }}-${{ env.OP_BRANCH }}-${{ env.TARGET_PROFILE }}-${{env.WRT_HASH}}
-        restore-keys: ${{ env.OP_REPO }}-${{ env.OP_BRANCH }}-${{ env.TARGET_PROFILE }}
-        path: |
-          ./openwrt/.ccache
-          ./openwrt/staging_dir/host*
-          ./openwrt/staging_dir/tool*
-
-    - name: 更新缓存
-      run: |
-        if [ -d "./openwrt/staging_dir" ]; then
-          find "./openwrt/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r DIR; do
-            find "$DIR" -type f -exec touch {} +
-          done
-
-          mkdir -p ./openwrt/tmp && echo "1" > ./openwrt/tmp/.build
-
-          echo "toolchain skiped done!"
-        else
-          echo "caches missed!"
-        fi
-
-        if ${{steps.check-cache.outputs.cache-hit != 'true'}}; then
-          CACHE_LIST=$(gh cache list --key "${{ env.OP_REPO }}-${{ env.OP_BRANCH }}-${{ env.TARGET_PROFILE }}" | cut -f 1)
-          for CACHE_KEY in $CACHE_LIST; do
-            gh cache delete $CACHE_KEY
-          done
-
-          echo "caches cleanup done!"
-        fi
+        ccache: 'true'
+        toolchain: 'true'
+        mixkey: ${{ env.OP_REPO }}-${{ env.OP_BRANCH }}-${{ env.TARGET_PROFILE }}-${{env.WRT_HASH}}
+        prefix: ${{ github.workspace }}/openwrt
 
     - name: 下载DL库
       run: |
